@@ -6,10 +6,14 @@ set(SOFAMETIS_SOURCE_DIR "src/sofa/metis")
 set(HEADER_FILES
     ${SOFAMETIS_SOURCE_DIR}/config.h.in
     ${SOFAMETIS_SOURCE_DIR}/init.h
+
+    ${SOFAMETIS_SOURCE_DIR}/MetisOrderingMethod.h
 )
 
 set(SOURCE_FILES
     ${SOFAMETIS_SOURCE_DIR}/init.cpp
+
+    ${SOFAMETIS_SOURCE_DIR}/MetisOrderingMethod.cpp
 )
 
 find_package(Sofa.Core REQUIRED)
