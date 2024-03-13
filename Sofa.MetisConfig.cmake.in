@@ -1,0 +1,8 @@
+# CMake package configuration file for the Sofa.Metis library
+
+@PACKAGE_GUARD@
+@PACKAGE_INIT@
+
+find_package(Sofa.Core QUIET REQUIRED)
+
+check_required_components(Sofa.Metis)
