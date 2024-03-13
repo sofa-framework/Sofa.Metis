@@ -19,10 +19,13 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
+#include <sofa/component/linearsolver/direct/EigenSolverFactory.h>
 #include <sofa/metis/init.h>
 
 #include <sofa/core/ObjectFactory.h>
 using sofa::core::ObjectFactory;
+
+#include <Eigen/MetisSupport>
 
 namespace sofa::metis
 {
@@ -34,11 +37,33 @@ namespace sofa::metis
         SOFA_METIS_API const char* getModuleComponentList();
     }
 
+
+    template<class EigenSolverFactory, class Scalar>
+    void registerOrderingMethods()
+    {
+        EigenSolverFactory::template registerSolver<Eigen::AMDOrdering<int>, Scalar >("AMD");
+        EigenSolverFactory::template registerSolver<Eigen::COLAMDOrdering<int>, Scalar >("COLAMD");
+        EigenSolverFactory::template registerSolver<Eigen::NaturalOrdering<int>, Scalar >("Natural");
+        EigenSolverFactory::template registerSolver<Eigen::MetisOrdering<int>, Scalar >("Metis");
+    }
+
+    template<class Scalar>
+    void registerOrderingMethods()
+    {
+        registerOrderingMethods<component::linearsolver::direct::MainSimplicialLDLTFactory, Scalar>();
+        registerOrderingMethods<component::linearsolver::direct::MainSimplicialLLTFactory, Scalar>();
+        registerOrderingMethods<component::linearsolver::direct::MainLUFactory, Scalar>();
+        registerOrderingMethods<component::linearsolver::direct::MainQRFactory, Scalar>();
+    }
+
     void init()
     {
         static bool first = true;
         if (first)
         {
+            registerOrderingMethods<float>();
+            registerOrderingMethods<double>();
+
             first = false;
         }
     }
