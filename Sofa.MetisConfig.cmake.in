@@ -3,6 +3,6 @@
 @PACKAGE_GUARD@
 @PACKAGE_INIT@
 
-find_package(Sofa.Core QUIET REQUIRED)
+find_package(Sofa.Component.LinearSolver.Direct QUIET REQUIRED)
 
 check_required_components(Sofa.Metis)

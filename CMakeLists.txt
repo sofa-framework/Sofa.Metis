@@ -16,8 +16,7 @@ set(SOURCE_FILES
     ${SOFAMETIS_SOURCE_DIR}/MetisOrderingMethod.cpp
 )
 
-find_package(Sofa.Core REQUIRED)
-sofa_find_package(Sofa.Component.LinearSolver.Direct REQUIRED)
+find_package(Sofa.Component.LinearSolver.Direct REQUIRED)
 
 find_package(metis 5.1.0 EXACT QUIET)
 if(NOT metis_FOUND AND SOFA_ALLOW_FETCH_DEPENDENCIES)
@@ -33,7 +32,7 @@ elseif (NOT metis_FOUND)
 endif()
 
 add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} PUBLIC Sofa.Core Sofa.Component.LinearSolver.Direct)
+target_link_libraries(${PROJECT_NAME} PUBLIC Sofa.Component.LinearSolver.Direct)
 target_link_libraries(${PROJECT_NAME} PRIVATE metis)
 
 sofa_create_package_with_targets(
