@@ -111,7 +111,7 @@ jobs:
         run: |
           chmod +x $WORKSPACE_BUILD_PATH/tests/Sofa.Metis_test${{ steps.sofa.outputs.exe }}
           cd $WORKSPACE_BUILD_PATH
-          ./tests/Sofa.Metis_test{{ steps.sofa.outputs.exe }}
+          ./tests/Sofa.Metis_test${{ steps.sofa.outputs.exe }}
 
   deploy:
     name: Deploy artifacts
