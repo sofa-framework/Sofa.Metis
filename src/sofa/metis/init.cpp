@@ -74,7 +74,12 @@ namespace sofa::metis
 
     const char* getModuleName()
     {
-        return sofa_tostring(SOFA_TARGET);
+        return MODULE_NAME;
+    }
+
+    const char* getModuleVersion()
+    {
+        return MODULE_VERSION;
     }
 
     const char* getModuleDescription()
