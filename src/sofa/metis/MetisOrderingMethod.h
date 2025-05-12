@@ -35,7 +35,7 @@ public:
 
     std::string methodName() const override;
 
-    void computePermutation(
+    void doComputePermutation(
         const SparseMatrixPattern& inPattern,
         int* outPermutation,
         int* outInversePermutation) override;

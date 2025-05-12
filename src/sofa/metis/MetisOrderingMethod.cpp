@@ -98,7 +98,7 @@ void csrToAdjMETIS(int n, int * M_colptr, int * M_rowind, type::vector<int>& adj
     }
 }
 
-void MetisOrderingMethod::computePermutation(
+void MetisOrderingMethod::doComputePermutation(
     const SparseMatrixPattern& inPattern, int* outPermutation,
     int* outInversePermutation)
 {
