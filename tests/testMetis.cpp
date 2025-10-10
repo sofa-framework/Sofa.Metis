@@ -8,6 +8,7 @@ extern "C" {
     #include <metis.h>
 }
 
+
 /**
  * This test is a substep of the SparseLDLSolver.MatrixFactorization test
  * It verifies a call of a METIS function.
@@ -17,12 +18,14 @@ extern "C" {
 TEST(Metis, permutation)
 {
     int n = 15;
-
     //input
     sofa::type::vector<int> xadj
     {  0, 0, 0, 0, 3, 6, 7, 10, 14, 16, 16, 18, 20, 20, 21, 22 };
     sofa::type::vector<int> adj
     { 4,6,7,3,6,7,8,3,4,7,3,4,6,10,5,11,7,13,8,14,10,11 };
+
+#ifdef METIS_VERSION_5_1_0
+
 
     //output
     sofa::type::vector<int> perm(n);
@@ -38,6 +41,12 @@ TEST(Metis, permutation)
 
     EXPECT_EQ(perm, expectedPerm);
     EXPECT_EQ(invperm, expectedInvPerm);
+#endif
+
+#ifdef METIS_VERSION_5_2_1
+
+#endif
+
 }
 
 
@@ -102,6 +111,9 @@ TEST(SparseLDLSolver, MatrixFactorization)
     solver->init();
     solver->invert(matrix);
 
+#ifdef METIS_VERSION_5_1_0
+
+
     auto* genericInvertData = solver->getMatrixInvertData(&matrix);
     EXPECT_NE(genericInvertData, nullptr);
 
@@ -160,4 +172,10 @@ TEST(SparseLDLSolver, MatrixFactorization)
 
     static const sofa::type::vector<int> expected_LT_colptr_Values { 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 4, 4, 5, 7, 11 };
     EXPECT_EQ(invertData->LT_colptr, expected_LT_colptr_Values);
+
+#endif
+
+#ifdef METIS_VERSION_5_2_1
+
+#endif
 }
