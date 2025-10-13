@@ -44,7 +44,20 @@ TEST(Metis, permutation)
 #endif
 
 #ifdef METIS_VERSION_5_2_1
+    //output
+    sofa::type::vector<int> perm(n);
+    sofa::type::vector<int> invperm(n);
 
+    const auto res = METIS_NodeND(&n , xadj.data(), adj.data(), nullptr, nullptr, perm.data(),invperm.data());
+    EXPECT_EQ(res, METIS_OK);
+
+    const sofa::type::vector<int> expectedPerm
+    { 12, 2, 0, 14, 5, 11, 8, 9, 1, 13, 10, 7, 3, 4, 6 };
+    const sofa::type::vector<int> expectedInvPerm
+    { 2, 8, 1, 12, 13, 4, 14, 11, 6, 7, 10, 5, 0, 9, 3 };
+
+    EXPECT_EQ(perm, expectedPerm);
+    EXPECT_EQ(invperm, expectedInvPerm);
 #endif
 
 }
@@ -111,9 +124,6 @@ TEST(SparseLDLSolver, MatrixFactorization)
     solver->init();
     solver->invert(matrix);
 
-#ifdef METIS_VERSION_5_1_0
-
-
     auto* genericInvertData = solver->getMatrixInvertData(&matrix);
     EXPECT_NE(genericInvertData, nullptr);
 
@@ -122,6 +132,7 @@ TEST(SparseLDLSolver, MatrixFactorization)
     EXPECT_NE(invertData, nullptr);
 
     EXPECT_EQ(invertData->n, 15);
+#ifdef METIS_VERSION_5_1_0
 
     static const sofa::type::vector<int> expected_perm_Values {
         14, 12, 5, 2, 0, 11, 8, 13, 9, 1, 10, 6, 3, 4, 7
@@ -177,5 +188,87 @@ TEST(SparseLDLSolver, MatrixFactorization)
 
 #ifdef METIS_VERSION_5_2_1
 
+
+
+    static const sofa::type::vector<int> expected_perm_Values {
+        12, 2, 0, 14, 5, 11, 8, 9, 1, 13, 10, 7, 3, 4, 6
+    };
+    EXPECT_EQ(invertData->perm.size(), expected_perm_Values.size());
+    for (std::size_t i = 0; i < invertData->perm.size(); ++i)
+    {
+        EXPECT_EQ(invertData->perm[i], expected_perm_Values[i]);
+    }
+
+    static const sofa::type::vector<SReal> expected_L_Values {
+        -3.9996192364012998418654198928834e-05, -9.9970489051262180859626360618364e-05, -5.9991889146865234069914279979585e-05, -3.9996192364012998418654198928834e-05, -5.9991889146865234069914279979585e-05,  -5.5984861234244268e-11, -9.9978484993670899e-05,  5.5984861234244268e-11,  1.6796698539857378e-06,  -3.1325628970804485e-17,  -5.5974788607159332e-11
+    };
+
+    ASSERT_EQ(invertData->L_nnz, expected_L_Values.size());
+    for (int i = 0; i < invertData->L_nnz; ++i)
+    {
+        EXPECT_FLOATINGPOINT_EQ(invertData->L_values[i], expected_L_Values[i])
+    }
+
+    static const sofa::type::vector<SReal> expected_LT_Values {
+        -3.9996192364012998419e-05, -9.997048905126218086e-05, -5.999188914686523407e-05, -3.9996192364012998419e-05, -5.999188914686523407e-05, -5.5984861234244267715e-11, -9.9978484993670899313e-05, 1.67966985398573777e-06, 5.5984861234244267715e-11, -3.1325628970804484797e-17, -5.5974788607159332246e-11
+    };
+
+
+    ASSERT_EQ(invertData->L_nnz, expected_LT_Values.size());
+    for (int i = 0; i < invertData->L_nnz; ++i)
+    {
+        EXPECT_FLOATINGPOINT_EQ(invertData->LT_values[i], expected_LT_Values[i])
+    }
+
+    static const sofa::type::vector<SReal> expected_invD_Values {
+         8000, 1, 1, 7999.6800304610906096, 3999.0402967383638497, 3999.6800464571460907, 3999.3601920641931429, 4000, 1, 7999.6800304610906096, 3999.6800464571460907, 3999.360152090995598, 3999.9999193790722529, 3999.0404173018969232, 4000
+    };
+
+    for (int i = 0; i < invertData->n; ++i)
+    {
+        EXPECT_FLOATINGPOINT_EQ(invertData->invD[i], expected_invD_Values[i])
+    }
+
+    static const sofa::type::vector<int> expected_L_rowind_Values { 5, 6, 6, 10, 11, 12, 13, 14, 13, 14, 14 };
+    EXPECT_EQ(invertData->L_rowind, expected_L_rowind_Values);
+
+    static const sofa::type::vector<int> expected_L_colptr_Values {  0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 4, 5, 8, 10, 11, 11 };
+    EXPECT_EQ(invertData->L_colptr, expected_L_colptr_Values);
+
+    static const sofa::type::vector<int> expected_LT_rowind_Values {  3, 4, 5, 9, 10, 11, 11, 12, 11, 12, 13 };
+    EXPECT_EQ(invertData->LT_rowind, expected_LT_rowind_Values);
+
+    static const sofa::type::vector<int> expected_LT_colptr_Values { 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 4, 5, 6, 8, 11 };
+    EXPECT_EQ(invertData->LT_colptr, expected_LT_colptr_Values);
 #endif
+
+    sofa::linearalgebra::FullVector<SReal> rightHandSide(15);
+    rightHandSide[0] = 1.0;
+    rightHandSide[1] = -1.0;
+    rightHandSide[2] = 2.0;
+    rightHandSide[3] = 3.2;
+    rightHandSide[4] = 1.4;
+    rightHandSide[5] = 0.12;
+    rightHandSide[6] = -3.11;
+    rightHandSide[7] = 0.0;
+    rightHandSide[8] = 1.25;
+    rightHandSide[9] = 0.002;
+    rightHandSide[10] = 1.0;
+    rightHandSide[11] = 2.4;
+    rightHandSide[12] = -0.5;
+    rightHandSide[13] = 0.5;
+    rightHandSide[14] = -1.2;
+    sofa::linearalgebra::FullVector<SReal> x(15);
+
+    solver->solve(matrix, x, rightHandSide);
+    static const sofa::type::vector<SReal> expected_solution_values {
+        1, -1, 2, 12799.990338154422716, 5598.6351128962178336, 480.38467046272677408, -12439.999999686555384, 0.79967843870635979542, 4999.824036739974872, 8, 3999.7600804176322526, 9599.3400940194769646, -4000, 3999.9999904041314949, -9599.2320995003410644
+    };
+
+    for (int i = 0; i < x.size(); ++i)
+    {
+        EXPECT_FLOATINGPOINT_EQ(x[i], expected_solution_values[i])
+    }
+
 }
+

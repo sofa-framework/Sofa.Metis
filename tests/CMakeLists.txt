@@ -16,14 +16,6 @@ else ()
     string(REPLACE "." "_" METIS_VERSION "${METIS_VERSION}")
 endif ()
 
-#TODO NEED TO CHANGE
-#set_target_properties(${PROJECT_NAME} PROPERTIES
-#        VERSION 5.2.1
-#        FRAMEWORK TRUE
-#        PUBLIC_HEADER ${CMAKE_CURRENT_BINARY_DIR}/include/metis.h)
-#In all METIS CMakeLists files of all branch
-
-
 target_compile_definitions( ${PROJECT_NAME} PUBLIC METIS_VERSION_${METIS_VERSION})
 
 target_link_libraries(${PROJECT_NAME} Sofa.Testing Sofa.Metis)
