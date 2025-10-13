@@ -9,6 +9,8 @@ extern "C" {
 }
 
 
+#ifdef GKRAND
+
 /**
  * This test is a substep of the SparseLDLSolver.MatrixFactorization test
  * It verifies a call of a METIS function.
@@ -41,7 +43,7 @@ TEST(Metis, permutation)
 
     EXPECT_EQ(perm, expectedPerm);
     EXPECT_EQ(invperm, expectedInvPerm);
-#endif
+#endif //METIS_VERSION_5_1_0
 
 #ifdef METIS_VERSION_5_2_1
     //output
@@ -58,9 +60,10 @@ TEST(Metis, permutation)
 
     EXPECT_EQ(perm, expectedPerm);
     EXPECT_EQ(invperm, expectedInvPerm);
-#endif
+#endif //METIS_VERSION_5_2_1
 
 }
+#endif //GKRAND
 
 
 /**
@@ -132,6 +135,8 @@ TEST(SparseLDLSolver, MatrixFactorization)
     EXPECT_NE(invertData, nullptr);
 
     EXPECT_EQ(invertData->n, 15);
+
+#ifdef GKRAND
 #ifdef METIS_VERSION_5_1_0
 
     static const sofa::type::vector<int> expected_perm_Values {
@@ -184,7 +189,7 @@ TEST(SparseLDLSolver, MatrixFactorization)
     static const sofa::type::vector<int> expected_LT_colptr_Values { 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 4, 4, 5, 7, 11 };
     EXPECT_EQ(invertData->LT_colptr, expected_LT_colptr_Values);
 
-#endif
+#endif //METIS_VERSION_5_1_0
 
 #ifdef METIS_VERSION_5_2_1
 
@@ -240,7 +245,8 @@ TEST(SparseLDLSolver, MatrixFactorization)
 
     static const sofa::type::vector<int> expected_LT_colptr_Values { 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3, 4, 5, 6, 8, 11 };
     EXPECT_EQ(invertData->LT_colptr, expected_LT_colptr_Values);
-#endif
+#endif //METIS_VERSION_5_2_1
+#endif //GKRAND
 
     sofa::linearalgebra::FullVector<SReal> rightHandSide(15);
     rightHandSide[0] = 1.0;
