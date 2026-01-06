@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(Sofa.Metis LANGUAGES CXX)
+project(Sofa.Metis LANGUAGES C CXX)
 
 set(SOFAMETIS_SOURCE_DIR "src/sofa/metis")
 
