@@ -29,8 +29,11 @@ extern "C" {
 namespace sofa::metis
 {
 
-int MetisOrderingMethodClass = sofa::core::RegisterObject("Nested dissection algorithm implemented in the METIS library.")
-    .add<MetisOrderingMethod>();
+void registerMetisOrderingMethod(sofa::core::ObjectFactory* factory)
+{
+    factory->registerObjects(sofa::core::ObjectRegistrationData("Nested dissection algorithm implemented in the METIS library.")
+    .add<MetisOrderingMethod>());
+}
 
 std::string MetisOrderingMethod::methodName() const
 {

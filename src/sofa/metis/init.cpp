@@ -24,19 +24,21 @@
 
 #include <sofa/core/ObjectFactory.h>
 using sofa::core::ObjectFactory;
+#include <sofa/helper/system/PluginManager.h>
 
 #include <Eigen/MetisSupport>
 
 namespace sofa::metis
 {
+    extern void registerMetisOrderingMethod(sofa::core::ObjectFactory* factory);
+
     extern "C" {
         SOFA_METIS_API void initExternalModule();
         SOFA_METIS_API const char* getModuleName();
         SOFA_METIS_API const char* getModuleVersion();
         SOFA_METIS_API const char* getModuleDescription();
-        SOFA_METIS_API const char* getModuleComponentList();
+        SOFA_METIS_API void registerObjects(sofa::core::ObjectFactory* factory);
     }
-
 
     template<class EigenSolverFactory, class Scalar>
     void registerOrderingMethods()
@@ -55,6 +57,9 @@ namespace sofa::metis
 
     void init()
     {
+        // make sure that this plugin is registered into the PluginManager
+        sofa::helper::system::PluginManager::getInstance().registerPlugin(MODULE_NAME);
+        
         static bool first = true;
         if (first)
         {
@@ -87,11 +92,9 @@ namespace sofa::metis
         return "";
     }
 
-    const char* getModuleComponentList()
+    void registerObjects(sofa::core::ObjectFactory* factory)
     {
-        /// string containing the names of the classes provided by the plugin
-        static std::string classes = ObjectFactory::getInstance()->listClassesFromTarget(sofa_tostring(SOFA_TARGET));
-        return classes.c_str();
+        registerMetisOrderingMethod(factory);
     }
 
 }
